@@ -25,7 +25,7 @@ public class Biblioteca {
 
         System.out.println("Anno di Pubblicazione:");
         int annoPubblicazione = scanner.nextInt();
-        scanner.nextLine(); // Consuma il carattere newline
+        scanner.nextLine();
 
         System.out.println("Numero di pagine:");
         int numeroPagine = scanner.nextInt();
@@ -36,6 +36,7 @@ public class Biblioteca {
         salvaCatalogo("catalogo.txt");
 
         System.out.println("Pubblicazione aggiunta con successo!");
+        stampaCatalogo();
     }
 
     public void rimuoviPubblicazione() {
@@ -47,6 +48,7 @@ public class Biblioteca {
             catalogo.remove(isbn);
             salvaCatalogo("catalogo.txt");
             System.out.println("Pubblicazione rimossa con successo!");
+            stampaCatalogo();
         } else {
             System.out.println("Nessuna pubblicazione trovata con ISBN " + isbn);
         }
@@ -58,7 +60,7 @@ public class Biblioteca {
             for (Pubblicazione pubblicazione : catalogo.values()) {
                 lines.add(pubblicazione.toFileString());
             }
-            FileUtils.writeLines(new File(percorsoFile), lines, true);
+            FileUtils.writeLines(new File(percorsoFile), lines, false);
             System.out.println("Catalogo salvato con successo!");
         } catch (IOException e) {
             System.err.println("Errore durante il salvataggio del catalogo: " + e.getMessage());
@@ -118,7 +120,10 @@ public class Biblioteca {
         return new Pubblicazione(isbn, titolo, annoPubblicazione, numeroPagine);
     }
 
-
+    public void stampaCatalogo() {
+        System.out.println("Catalogo attuale:");
+        catalogo.values().forEach(System.out::println);
+    }
 
     public Optional<Pubblicazione> ricercaPerIsbn(String isbn) {
         return Optional.ofNullable(catalogo.get(isbn));
@@ -153,7 +158,8 @@ public class Biblioteca {
             System.out.println("3 - Ricerca per ISBN");
             System.out.println("4 - Ricerca per Anno di Pubblicazione");
             System.out.println("5 - Ricerca per Autore");
-            System.out.println("6 - Esci");
+            System.out.println("6 - Stampare Catalogo");
+            System.out.println("0 - Esci");
 
             int scelta = scanner.nextInt();
             scanner.nextLine();
@@ -198,6 +204,9 @@ public class Biblioteca {
                     }
                     break;
                 case 6:
+                    stampaCatalogo();
+                    break;
+                case 0:
                     running = false;
                     break;
                 default:
