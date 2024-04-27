@@ -1,0 +1,2 @@
+ISBN=1;Titolo=1;Anno di pubblicazione=1;Numero di pagine=1
+ISBN=2;Titolo=2;Anno di pubblicazione=2;Numero di pagine=2
