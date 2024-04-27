@@ -70,7 +70,6 @@ public class Biblioteca {
             List<String> lines = FileUtils.readLines(new File(percorsoFile), Charset.defaultCharset());
             for (String line : lines) {
                 Pubblicazione pubblicazione = parsePubblicazioneFromString(line);
-                assert pubblicazione != null;
                 catalogo.put(pubblicazione.getIsbn(), pubblicazione);
             }
             System.out.println("Catalogo caricato con successo!");
@@ -81,30 +80,44 @@ public class Biblioteca {
 
 
     private Pubblicazione parsePubblicazioneFromString(String valueString) {
-        String[] parts = valueString.split("=");
-        if (parts.length != 2) {
-            System.err.println("Formato dati non valido: " + valueString);
-            return null;
-        }
-        String fieldName = parts[0].trim();
-        String fieldValue = parts[1].trim();
+        String[] parts = valueString.split(";");
+        String isbn = "";
+        String titolo = "";
+        int annoPubblicazione = 0;
+        int numeroPagine = 0;
 
-        switch (fieldName) {
-            case "ISBN":
-                return new Pubblicazione(fieldValue, "", 0, 0);
-            case "Titolo":
-                return new Pubblicazione("", fieldValue, 0, 0);
-            case "Anno di pubblicazione":
-                int annoPubblicazione = Integer.parseInt(fieldValue);
-                return new Pubblicazione("", "", annoPubblicazione, 0);
-            case "Numero di pagine":
-                int numeroPagine = Integer.parseInt(fieldValue);
-                return new Pubblicazione("", "", 0, numeroPagine);
-            default:
-                System.err.println("Campo non riconosciuto: " + fieldName);
+        for (String part : parts) {
+            String[] keyValue = part.split("=");
+            if (keyValue.length != 2) {
+                System.err.println("Formato dati non valido: " + valueString);
                 return null;
+            }
+
+            String fieldName = keyValue[0].trim();
+            String fieldValue = keyValue[1].trim();
+
+            switch (fieldName) {
+                case "ISBN":
+                    isbn = fieldValue;
+                    break;
+                case "Titolo":
+                    titolo = fieldValue;
+                    break;
+                case "Anno di pubblicazione":
+                    annoPubblicazione = Integer.parseInt(fieldValue);
+                    break;
+                case "Numero di pagine":
+                    numeroPagine = Integer.parseInt(fieldValue);
+                    break;
+                default:
+                    System.err.println("Campo non riconosciuto: " + fieldName);
+                    break;
+            }
         }
+
+        return new Pubblicazione(isbn, titolo, annoPubblicazione, numeroPagine);
     }
+
 
 
     public Optional<Pubblicazione> ricercaPerIsbn(String isbn) {
